@@ -116,7 +116,7 @@ Now write a bash script which repeats the following cycle of steps for 99 times:
 
 **Question:** Does the size of the folder look reasonable relative to the sizes of the individual files inside it? (Use `ls -l -h` to list the files with the size info; `-l` is for "long.") If not, why would that be? How would this explain why [Github discourages you from commiting (large) binary files](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github)?
 
-**Your answer:** (To be filled.)
+**Your answer:** The size of the git_expreiment/ folder is 411k but the total file size is 75k. The reason is that there's a hidden folder .git in the repository folder. Every time we commit, the log in formation (also the old versions of files) will be saved there. If we have a large binary file to commit, the .git size will increase linearly with the committing time, taking a lot of sapce, and this explains why committing (large) binary files is discouraged.
 
 ## Things to commit and submit
 
@@ -137,4 +137,5 @@ Set up your own version of the `hiperglm` package as we discussed in the class a
 
 ## Things to commit and submit
 
-Hyperlink to the `hiperglm` repository on your Github account
+Hyperlink to the `hiperglm` repository on your Github account:
+https://github.com/WentaoZhan1998/hiperglm.git
