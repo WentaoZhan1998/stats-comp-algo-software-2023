@@ -131,6 +131,9 @@ Then solve a positive-definite system $\bA \bx = \bb$ for $\bx$ using the three 
 Which algorithm appears to be more accurate than the others? 
 Visually demonstrate your answer.
 
+**Answer:**
+LU decomposition is having the highest accuracy.
+
 ```{r, eval=FALSE}
 set.seed(1918)
 cond_num <- 1e6
@@ -154,6 +157,11 @@ rel_dif(norm_2(x), norm_2(x_hat_QR))
 median(apply(rbind(x, x_hat), 2, function(x){rel_dif(x[1], x[2])}))
 median(apply(rbind(x, x_hat_chol), 2, function(x){rel_dif(x[1], x[2])}))
 median(apply(rbind(x, x_hat_QR), 2, function(x){rel_dif(x[1], x[2])}))
+
+plot(x_hat-x, col="blue", ylab="error", pch=19, cex=0.5)
+points(x_hat_chol-x, col="red", pch=19, cex=0.5)
+points(x_hat_QR-x, col="green", pch=19, cex=0.5)
+legend("right", legend = c("LU", "chol", "QR"), col = c("blue", "red", "green"), pch = c(19,19,19))
 ```
 
 ### Task &#x4E09;
@@ -173,48 +181,6 @@ We also vary the condition number of $\bA$ and assess whether the results would 
 **Note:** 
 The QR solver will throw an error when the system is ill-condition enough that the numerical solution might not be very accurate. 
 To force it to return the solution in any case, set `tol = .Machine$double.eps`.
-
-```{r, eval=FALSE}
-# Utility functions for bookkeeping simulation results.
-source(file.path("R", "num_linalg_sim_study_helper.R"))
-
-n_sim <- 32L
-mat_size <- 512L
-cond_num <- 1e12
-metrics <- c("norm_abs", "norm", "median", "five_percentile", "ninety_five_percentile")
-  # TODO: add another metric and modify the helper script accordingly
-
-rel_error_list <- sapply(
-  c("lu", "chol", "qr"), 
-  function(method) pre_allocate_error_list(n_sim, metrics),
-  simplify = FALSE,
-  USE.NAMES = TRUE
-)
-
-for (sim_index in 1:n_sim) {
-  A <- rand_positive_def_matrix(mat_size, cond_num)
-  x <- rnorm(mat_size) 
-  b <- matvec_ldouble(A, x)
-  x_approx <- list( 
-    lu = solve(A, b),
-    chol = solve_via_cholesky(A, b),
-    qr = solve_via_QR(A, b)
-  )
-  for (method in c("lu", "chol", "qr")) {
-    rel_error <- lapply(
-      metrics, 
-      function (metric) calc_rel_error(x, x_approx[[method]], metric)
-    )
-    names(rel_error) <- metrics
-    for (metric in names(rel_error)) {
-      rel_error_list[[method]][[metric]][sim_index] <- rel_error[[metric]]
-    }
-  }
-}
-
-# TODO: visually compare errors
-
-```
 
 ```{r, eval=FALSE}
 # Utility functions for bookkeeping simulation results.
